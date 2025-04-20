@@ -9,8 +9,10 @@ import streamlit as st
 import numpy as np
 import pickle
 
+# Use actual uploaded file path
+model_path = '/mnt/data/file-4kGkioM32ScnDxLyiD5Etp'
+
 # Load the trained model
-model_path = '/mnt/data/dtm_trained_model.pkl'
 try:
     with open(model_path, 'rb') as f:
         dtm_model = pickle.load(f)
@@ -28,7 +30,7 @@ sepal_width = st.slider("Sepal Width (cm)", 2.0, 4.5, 3.5)
 petal_length = st.slider("Petal Length (cm)", 1.0, 7.0, 1.4)
 petal_width = st.slider("Petal Width (cm)", 0.1, 2.5, 0.2)
 
-# Debug input
+# Show input values
 st.write("📊 Current Input:")
 st.json({
     "sepal_length": sepal_length,
@@ -40,20 +42,10 @@ st.json({
 # Predict button
 if st.button("Predict"):
     try:
-        # Create input array
         input_data = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
-        
-        # Predict
         prediction = dtm_model.predict(input_data)
         predicted_class = int(prediction[0])
-
-        # Map prediction to species
         species = ['Setosa', 'Versicolor', 'Virginica']
-        
-        if predicted_class in [0, 1, 2]:
-            st.success(f"🌸 The predicted species is: **{species[predicted_class]}**")
-        else:
-            st.warning(f"⚠️ Prediction out of expected range: {predicted_class}")
-
+        st.success(f"🌸 The predicted species is: **{species[predicted_class]}**")
     except Exception as e:
         st.error(f"❌ Prediction error: {str(e)}")
